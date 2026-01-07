@@ -13,7 +13,7 @@ env:
   EXTRA_CMDS : "LLVM=1 LLVM_IAS=1"
 
   KERNEL_SOURCE : "https://github.com/adbghftoo/kernel_xiaomi_raphael_noksu.git"
-  KERNEL_BRANCH : "16.0"
+  KERNEL_BRANCH : "15.0"
 
   CLANG_SOURCE : "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman"
   CLANG_BRANCH : ""
@@ -127,6 +127,28 @@ jobs:
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
+
+      - name: 📦 Package and Upload Patched Source
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          
+          echo "正在清理编译产物以减小体积..."
+          cp out/.config ./saved_config || true
+          make mrproper || true
+          rm -rf out
+          rm -rf .git
+          mv saved_config .config || true
+          echo "正在压缩源码..."
+          tar -czf ../patched_source_sm8150_4.14.tar.gz .
+          echo "源码打包完成！"
+
+      - name: ☁️ Upload Source Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: patched-kernel-source
+          path: patched_source_sm8150_4.14.tar.gz
+          retention-days: 3
 
       - name: 🔩 Pack Process
         uses: ./.github/workflows/pack-process
