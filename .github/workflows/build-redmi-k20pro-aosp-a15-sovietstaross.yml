@@ -128,6 +128,12 @@ jobs:
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
+      - name: 🔩 Pack Process
+        uses: ./.github/workflows/pack-process
+
+      - name: ✏️ Upload Artifacts
+        uses: ./.github/workflows/upload-files
+
       - name: 📦 Package and Upload Patched Source
         if: always()
         run: |
@@ -149,9 +155,3 @@ jobs:
           name: patched-kernel-source
           path: patched_source_sm8150_4.14.tar.gz
           retention-days: 3
-
-      - name: 🔩 Pack Process
-        uses: ./.github/workflows/pack-process
-
-      - name: ✏️ Upload Artifacts
-        uses: ./.github/workflows/upload-files
